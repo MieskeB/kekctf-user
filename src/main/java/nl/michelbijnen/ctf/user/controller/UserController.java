@@ -34,6 +34,23 @@ public class UserController {
         return ResponseEntity.ok(userDtos);
     }
 
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserDto> getUser(@PathVariable String userId) {
+        Optional<User> optionalUser = this.userRepository.findById(userId);
+        if (!optionalUser.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User id does not exist");
+        }
+
+        User user = optionalUser.get();
+
+        UserDto userDto = new UserDto(user.getId(),
+                user.getUsername(),
+                user.getTeam().getName(),
+                user.getRole());
+
+        return ResponseEntity.ok(userDto);
+    }
+
     @DeleteMapping("/{userId}")
     public ResponseEntity deleteUser(@PathVariable String userId) {
         Optional<User> optionalUser = this.userRepository.findById(userId);
